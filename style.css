@@ -13,6 +13,7 @@ body{
     display: flex;
     width: 600px;
     height: 600px;
+    background-color: lightseagreen;
     border: solid black;
     flex-flow: row wrap;
 }
@@ -22,8 +23,12 @@ body{
     background-color: white;
     border: 0px;
     margin:0px;
+    justify-content: center;
+    align-items: center;
 }
 
-div {
-    background-color: red;
+button{
+    display: flex;
+    margin-bottom: 10px;
+    font-size: 20px;
 }
