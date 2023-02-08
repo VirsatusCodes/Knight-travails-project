@@ -2,9 +2,13 @@
     renderBoard();
   })();
 
+
+
 function renderBoard() {
     const gameboardSize = 8;
     let counter = 1;
+    let xCounter = 0;
+    let yCounter = 0;
     for(let i = gameboardSize; i > 0; i--){
 
         for(let i = gameboardSize; i > 0 ; i--){
@@ -20,8 +24,12 @@ function renderBoard() {
             grid.style.backgroundColor = `rgb(${100}, ${100}, ${100})`
             }
             counter++;
+            grid.dataset.coordinates = [xCounter, yCounter]
             board.appendChild(grid);
+            xCounter++;
         }
+        xCounter=0;
+        yCounter++;
         counter++;
             }
 }
@@ -64,7 +72,9 @@ function knightSelectSpot() {
     hover.addEventListener('mousedown', (function (e) {
         if(knightStartPlaced != true) {
         e.target.textContent = knightIcon ;
+        knightStartStop.push(e.target.dataset.coordinates)
         knightStartPlaced = true;
+        console.log(knightStartStop)
         }
     }))
 }
@@ -77,11 +87,13 @@ function knightEndSpot() {
     hover.addEventListener('mousedown', (function (e) {
         if(knightEndPlaced != true) {
         e.target.textContent = knightIcon ;
+        knightStartStop.push(e.target.dataset.coordinates)
         knightEndPlaced = true;
+        console.log(knightStartStop)
         }
     }))
 }
-
+const knightStartStop = []
 function knightInAction() {
 
 }
