@@ -2,13 +2,11 @@
     renderBoard();
   })();
 
-
-
 function renderBoard() {
     const gameboardSize = 8;
     let counter = 1;
-    let xCounter = 0;
-    let yCounter = 0;
+    let xCounter = 1;
+    let yCounter = 8;
     for(let i = gameboardSize; i > 0; i--){
 
         for(let i = gameboardSize; i > 0 ; i--){
@@ -28,8 +26,8 @@ function renderBoard() {
             board.appendChild(grid);
             xCounter++;
         }
-        xCounter=0;
-        yCounter++;
+        xCounter=1;
+        yCounter--;
         counter++;
             }
 }
@@ -53,17 +51,20 @@ function removeBoard() {
 
         const knightMoves = document.querySelector('#knightMoves');
         knightMoves.addEventListener('click', () => {
-            knightInAction();
+            knightInAction(knightStartStop);
         })
 
         const reset = document.querySelector('#reset');
         reset.addEventListener('click', () => {
             removeBoard();
             renderBoard();
+            while(knightStartStop.length > 0) {
+                knightStartStop.pop();
+            }
         })
       })();
 
-/* the select spots are going to need to record the coordinates */
+
 function knightSelectSpot() {
     const hover = document.querySelector('#board');
     const knightIcon = 'K'
@@ -93,7 +94,65 @@ function knightEndSpot() {
         }
     }))
 }
-const knightStartStop = []
-function knightInAction() {
+const knightStartStop = ['4,5', '5,7']
+const knightStartStop2 = ['1,1', '2,3']
+
+function knightInAction(inp) {
+    console.log(inp)
+/* 2 over below to avoid comma */
+const currentLocation = [+inp[0][0], +inp[0][2]];
+const targetLocation = [+inp[1][0], +inp[1][2]];
+
+const transform = (currentLocation, locationChange) => 
+[(currentLocation[0] + locationChange[0]), (currentLocation[1] + locationChange[1])];
+
+const isLegalMove = (move) => {
+    const minX = 1;
+    const minY = 1;
+    const MaxX = 8;
+    const maxY = 8;
+
+    if(minX <= move[0] && move[0] <= MaxX && minY <= move[1] && move[1] <= maxY) {
+        return true
+       }
+       else return false
+}
+
+const isValueEqual = (inp1, inp2) => {  
+    if((inp1[0] === inp2[0]) && (inp1[1] === inp2[1])) {
+        return true
+    }
+    else return false
+}
+
+const moveMaker = () => {
+    let legalMoves = [];
+    let potentialRoute = [];
+    const potentialMoves = [
+        [1,2],[2,1],[2,-1],[1,-2],[-2,-1],[-1,-2],[-2,1],[-1,2]
+    ]
+for (let i = 0; i < potentialMoves.length; i++) {
+    
+   const potentialAction = transform(currentLocation, potentialMoves[i]);
+
+   if(isLegalMove(potentialAction)) {
+    legalMoves.push(potentialAction);
+/*     console.log(i, legalMoves); */
+   }
+}
+
+for (let i = 0; i < legalMoves.length; i++) {
+    if(isValueEqual(legalMoves[i], targetLocation)) {
+     potentialRoute.push(legalMoves[i]);
+     console.log(potentialRoute)
+    }
+ }
 
 }
+moveMaker();
+}
+
+
+
+knightInAction(knightStartStop)
+knightInAction(knightStartStop2)
