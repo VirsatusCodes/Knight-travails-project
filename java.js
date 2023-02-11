@@ -5,8 +5,8 @@
 function renderBoard() {
     const gameboardSize = 8;
     let counter = 1;
-    let xCounter = 1;
-    let yCounter = 8;
+    let xCounter = 0;
+    let yCounter = 7;
     for(let i = gameboardSize; i > 0; i--){
 
         for(let i = gameboardSize; i > 0 ; i--){
@@ -26,7 +26,7 @@ function renderBoard() {
             board.appendChild(grid);
             xCounter++;
         }
-        xCounter=1;
+        xCounter=0;
         yCounter--;
         counter++;
             }
@@ -51,7 +51,7 @@ function removeBoard() {
 
         const knightMoves = document.querySelector('#knightMoves');
         knightMoves.addEventListener('click', () => {
-            knightInAction(knightStartStop);
+           /*  knightInAction(knightStartStop); data translation necessary*/
         })
 
         const reset = document.querySelector('#reset');
@@ -94,23 +94,25 @@ function knightEndSpot() {
         }
     }))
 }
-const knightStartStop = ['4,5', '5,7']
-const knightStartStop2 = ['1,1', '2,3']
 
 function knightInAction(inp) {
     console.log(inp)
 /* 2 over below to avoid comma */
-const currentLocation = [+inp[0][0], +inp[0][2]];
-const targetLocation = [+inp[1][0], +inp[1][2]];
+/* let currentLocation = [+inp[0][0], +inp[0][2]];
+const targetLocation = [+inp[1][0], +inp[1][2]]; */
+let currentLocation = inp[0]
+const initialLocation = inp[0]
+const targetLocation = inp[1]
+console.log(currentLocation, targetLocation)
 
 const transform = (currentLocation, locationChange) => 
 [(currentLocation[0] + locationChange[0]), (currentLocation[1] + locationChange[1])];
 
 const isLegalMove = (move) => {
-    const minX = 1;
-    const minY = 1;
-    const MaxX = 8;
-    const maxY = 8;
+    const minX = 0;
+    const minY = 0;
+    const MaxX = 7;
+    const maxY = 7;
 
     if(minX <= move[0] && move[0] <= MaxX && minY <= move[1] && move[1] <= maxY) {
         return true
@@ -125,34 +127,53 @@ const isValueEqual = (inp1, inp2) => {
     else return false
 }
 
-const moveMaker = () => {
-    let legalMoves = [];
-    let potentialRoute = [];
+const moveGenerator = (currentLocation) => {
+    const nextLegalPositions = [];
     const potentialMoves = [
         [1,2],[2,1],[2,-1],[1,-2],[-2,-1],[-1,-2],[-2,1],[-1,2]
     ]
-for (let i = 0; i < potentialMoves.length; i++) {
-    
-   const potentialAction = transform(currentLocation, potentialMoves[i]);
-
-   if(isLegalMove(potentialAction)) {
-    legalMoves.push(potentialAction);
-/*     console.log(i, legalMoves); */
-   }
+    for(let i = 0; i < potentialMoves.length; i++) {
+        const move = transform(currentLocation, potentialMoves[i])
+          if(isLegalMove(move)) {
+            nextLegalPositions.push(move)
+          }
+    }
+    return nextLegalPositions;
 }
 
-for (let i = 0; i < legalMoves.length; i++) {
-    if(isValueEqual(legalMoves[i], targetLocation)) {
-     potentialRoute.push(legalMoves[i]);
-     console.log(potentialRoute)
-    }
- }
+const knightMoves = (target) => {
+    const queue = [initialLocation]
+    const path = []
 
+    while(queue.length > 0) {
+        const currentPosition = queue.shift();
+        const legalMoves = moveGenerator(currentPosition);
+        path.push(currentPosition);
+        if(currentPosition[0] === target[0] && currentPosition[1] === target[1]) return path
+
+        legalMoves.forEach(element => {
+        for(let i = 0; i < path.length; i++) {
+
+            if(!isValueEqual(element, path[i])) {
+                queue.push(element)
+            }
+        }
+    });
+}
+  }
+
+const moveMaker = () => {
+    console.log(knightMoves(targetLocation));
 }
 moveMaker();
+
 }
 
+const knightStartStop = [[4,5], [5,7]]
+const knightStartStop2 = [[0,7], [3,4]]
+const knightStartStop3 = [[0,7], [2,2]]
 
+const one = knightInAction(knightStartStop)
+const two = knightInAction(knightStartStop2)
+/* const three = knightInAction(knightStartStop3) */
 
-knightInAction(knightStartStop)
-knightInAction(knightStartStop2)
