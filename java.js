@@ -95,15 +95,59 @@ function knightEndSpot() {
     }))
 }
 
+const allMadeMoves = new Map();
+
+const Chess = (x, y) => {
+    const coord = [x, y]
+
+    const knightActions = [
+        [1,2],[2,1],[2,-1],[1,-2],[-2,-1],[-1,-2],[-2,1],[-1,2]
+    ]
+
+    let previousSpot;
+
+    const getPrevious = () => previousSpot;
+    const setPrevious = (inp) => {
+        previousSpot = inp || previousSpot;
+    }
+
+    const callLocation = () => `${coord[0]}, ${coord[1]}`;
+
+    const newMove = (xOffset, yOffset) => {
+        const [newX, newY] = [coord[0] + xOffset, coord[1] + yOffset];
+        if(0 <= newX && newX < 8 && 0 <= newY && newY < 8) {
+            return Chess(newX, newY)
+        }
+    }
+
+    const knightMovements = () => {
+        return knightActions
+                .map((moves) => newMove(moves[0], moves[1]))
+                .filter((legalMove) => legalMove !== undefined);
+    }
+
+    return {getPrevious, setPrevious, callLocation, newMove, knightMovements}
+}
+
+
+
+
+
+
+
+
+
+
+
 function knightInAction(inp) {
-    console.log(inp)
+    /* console.log(inp) */
 /* 2 over below to avoid comma */
 /* let currentLocation = [+inp[0][0], +inp[0][2]];
 const targetLocation = [+inp[1][0], +inp[1][2]]; */
 let currentLocation = inp[0]
 const initialLocation = inp[0]
 const targetLocation = inp[1]
-console.log(currentLocation, targetLocation)
+/* console.log(currentLocation, targetLocation) */
 
 const transform = (currentLocation, locationChange) => 
 [(currentLocation[0] + locationChange[0]), (currentLocation[1] + locationChange[1])];
@@ -142,6 +186,7 @@ const moveGenerator = (currentLocation) => {
 }
 
 const knightMoves = (target) => {
+    console.log(target)
     const queue = [initialLocation]
     const path = []
 
@@ -155,6 +200,7 @@ const knightMoves = (target) => {
         for(let i = 0; i < path.length; i++) {
 
             if(!isValueEqual(element, path[i])) {
+                console.log('oops')
                 queue.push(element)
             }
         }
