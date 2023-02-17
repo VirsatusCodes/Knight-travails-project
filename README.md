@@ -1,2 +1,7 @@
 # Knight-travails-project
 get a knight to move placed in the shortest possible path https://www.theodinproject.com/lessons/javascript-knights-travails
+
+
+I leaned heavily on JoshDevHub's rendition for the solution here making sure to go through piece by piece and understand the implications and reasoning behind the different functions. i felt the need to move on and also felt i understood what to do properly besides the actual code to accomplish it, i understood i would need to make nodes that pointed backwards using a queue system while applying a set of possible legal moves to each node, and then rinse and repeating that until i found my target and then flowing backwrds to reach it, i had a lot of trial and error done and also watched Graph Algorithms for Technical Interviews - Full Course (https://www.youtube.com/watch?v=tWVWeAqZ0WU) to get to those conclusions, this project was difficult to wrap my head around a bit but after doing a bit of outside research beyond what was offered by ODIN it became fairly straightforward, forcing myself to slow down and write out pseudo code was probably the biggest gain i had from this.
+
+Also the use of new Map() was unforseen but useful i was going to try using Set() but i believe Map() was better. it was a very informative project, though maybe some extra prep from ODIN would have been nice, though maybe not as it didnt take much digging to find my own useful resources which is a skill i will need to build post-ODIN anyways.
