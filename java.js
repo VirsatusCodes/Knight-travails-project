@@ -51,7 +51,6 @@ function removeBoard() {
 
         const knightMoves = document.querySelector('#knightMoves');
         knightMoves.addEventListener('click', () => {
-           /*  knightInAction(knightStartStop); data translation necessary*/
         })
 
         const reset = document.querySelector('#reset');
@@ -94,7 +93,7 @@ function knightEndSpot() {
         }
     }))
 }
-
+/* ------------------------------------------------------------------- */
 const allMadeMoves = new Map();
 
 const Chess = (x, y) => {
@@ -108,8 +107,13 @@ const Chess = (x, y) => {
 
     const getPrevious = () => previousSpot;
     const setPrevious = (inp) => {
-        previousSpot = inp || previousSpot;
+        previousSpot = previousSpot || inp;
     }
+    /* set previous func is very important to do in this order
+    because you want the previous spot to be sent only once with a 
+    valid value not continually reset, this way it will set its value
+    then when something tries to change that value it wont because
+    it already has a valid value */
 
     const callLocation = () => `${coord[0]}, ${coord[1]}`;
 
@@ -126,100 +130,43 @@ const Chess = (x, y) => {
                 .filter((legalMove) => legalMove !== undefined);
     }
 
-    return {getPrevious, setPrevious, callLocation, newMove, knightMovements}
-}
-
-
-
-
-
-
-
-
-
-
-
-function knightInAction(inp) {
-    /* console.log(inp) */
-/* 2 over below to avoid comma */
-/* let currentLocation = [+inp[0][0], +inp[0][2]];
-const targetLocation = [+inp[1][0], +inp[1][2]]; */
-let currentLocation = inp[0]
-const initialLocation = inp[0]
-const targetLocation = inp[1]
-/* console.log(currentLocation, targetLocation) */
-
-const transform = (currentLocation, locationChange) => 
-[(currentLocation[0] + locationChange[0]), (currentLocation[1] + locationChange[1])];
-
-const isLegalMove = (move) => {
-    const minX = 0;
-    const minY = 0;
-    const MaxX = 7;
-    const maxY = 7;
-
-    if(minX <= move[0] && move[0] <= MaxX && minY <= move[1] && move[1] <= maxY) {
-        return true
-       }
-       else return false
-}
-
-const isValueEqual = (inp1, inp2) => {  
-    if((inp1[0] === inp2[0]) && (inp1[1] === inp2[1])) {
-        return true
+    if(allMadeMoves.has(callLocation())) {
+        return allMadeMoves.get(callLocation());
+    } else {
+        newChess = {callLocation, getPrevious, setPrevious, knightMovements}
+        allMadeMoves.set(callLocation(), newChess);
+        return newChess; 
     }
-    else return false
 }
 
-const moveGenerator = (currentLocation) => {
-    const nextLegalPositions = [];
-    const potentialMoves = [
-        [1,2],[2,1],[2,-1],[1,-2],[-2,-1],[-1,-2],[-2,1],[-1,2]
-    ]
-    for(let i = 0; i < potentialMoves.length; i++) {
-        const move = transform(currentLocation, potentialMoves[i])
-          if(isLegalMove(move)) {
-            nextLegalPositions.push(move)
-          }
-    }
-    return nextLegalPositions;
-}
+const Knight = (start, goal) => {
+    allMadeMoves.clear();
 
-const knightMoves = (target) => {
-    console.log(target)
-    const queue = [initialLocation]
-    const path = []
+    const beggining = Chess(...start);
+    const target = Chess(...goal);
 
-    while(queue.length > 0) {
+    const queue = [beggining];
+    const path = [target];
+    /* below adds nodes in a chain leading to original until
+    a node link is created between my target and originator */
+    while(!queue.includes(target)) {
         const currentPosition = queue.shift();
-        const legalMoves = moveGenerator(currentPosition);
-        path.push(currentPosition);
-        if(currentPosition[0] === target[0] && currentPosition[1] === target[1]) return path
+        const newMoves = currentPosition.knightMovements();
 
-        legalMoves.forEach(element => {
-        for(let i = 0; i < path.length; i++) {
+        newMoves.forEach((position) => position.setPrevious(currentPosition));
+        /* set up direction chain begining at initial position */
+        queue.push(...newMoves)
+    }
+    /* and this below goes to target and backtracks to original starting point */
+    while(!path.includes(beggining)) {
+        const prevCoord = path[0].getPrevious();
+        path.unshift(prevCoord);
+    }
 
-            if(!isValueEqual(element, path[i])) {
-                console.log('oops')
-                queue.push(element)
-            }
-        }
-    });
-}
-  }
-
-const moveMaker = () => {
-    console.log(knightMoves(targetLocation));
-}
-moveMaker();
-
+    path.forEach(move => console.log(move.callLocation()));
 }
 
-const knightStartStop = [[4,5], [5,7]]
-const knightStartStop2 = [[0,7], [3,4]]
-const knightStartStop3 = [[0,7], [2,2]]
-
-const one = knightInAction(knightStartStop)
-const two = knightInAction(knightStartStop2)
-/* const three = knightInAction(knightStartStop3) */
+const one = Knight([4,5], [5,7])
+const two = Knight([0,7], [3,4]) 
+const three = Knight([0,7], [2,2])
 
