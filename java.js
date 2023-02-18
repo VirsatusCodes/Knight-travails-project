@@ -52,7 +52,9 @@ function removeBoard() {
 
         const knightMoves = document.querySelector('#knightMoves');
         knightMoves.addEventListener('click', () => {
-            Knight([+knightStartStop[0][0] , +knightStartStop[0][2]], [+knightStartStop[1][0], +knightStartStop[1][2]])
+            const translatedKnightValues = typeConverter(knightStartStop)
+            Knight(translatedKnightValues[0], translatedKnightValues[1]);
+            knightPathMarker();
         })
 
         const reset = document.querySelector('#reset');
@@ -67,11 +69,10 @@ function removeBoard() {
 
 
 function knightSelectSpot() {
-    const hover = document.querySelector('#board');
-    const knightIcon = 'K'
+    const knightIcon = 'Start'
     let knightStartPlaced = false
     
-    hover.addEventListener('mousedown', (function (e) {
+    board.addEventListener('mousedown', (function (e) {
         if(knightStartPlaced != true) {
         e.target.textContent = knightIcon ;
         knightStartStop.push(e.target.dataset.coordinates)
@@ -82,11 +83,10 @@ function knightSelectSpot() {
 }
 
 function knightEndSpot() {
-    const hover = document.querySelector('#board');
-    const knightIcon = 'K'
+    const knightIcon = 'Goal'
     let knightEndPlaced = false
     
-    hover.addEventListener('mousedown', (function (e) {
+    board.addEventListener('mousedown', (function (e) {
         if(knightEndPlaced != true) {
         e.target.textContent = knightIcon ;
         knightStartStop.push(e.target.dataset.coordinates)
@@ -95,8 +95,22 @@ function knightEndSpot() {
         }
     }))
 }
+
+function knightPathMarker() {
+        for (let i = 0; i < path.length; i++) {
+            const currentNode = document.querySelector(`[data-coordinates= "${path[i].callLocation()}"]`)
+            console.log(currentNode)
+            currentNode.textContent= `Knight ${i}`      
+    }
+}
+/* changes an array of string values into one array containing
+two arrays that have the start and end goal coordinates*/
+function typeConverter(arr) {
+    return [[+arr[0][0], +arr[0][2]], [+arr[1][0], +arr[1][2]]]
+}
 /* ------------------------------------------------------------------- */
 const allMadeMoves = new Map();
+let path = [];
 
 const Chess = (x, y) => {
     const coord = [x, y]
@@ -117,7 +131,7 @@ const Chess = (x, y) => {
     then when something tries to change that value it wont because
     it already has a valid value */
 
-    const callLocation = () => `${coord[0]}, ${coord[1]}`;
+    const callLocation = () => `${coord[0]},${coord[1]}`;
 
     const newMove = (xOffset, yOffset) => {
         const [newX, newY] = [coord[0] + xOffset, coord[1] + yOffset];
@@ -148,7 +162,7 @@ const Knight = (start, goal) => {
     const target = Chess(...goal);
 
     const queue = [beggining];
-    const path = [target];
+    path = [target];
     /* below adds nodes in a chain leading to original until
     a node link is created between my target and originator */
     while(!queue.includes(target)) {
@@ -165,6 +179,7 @@ const Knight = (start, goal) => {
         path.unshift(prevCoord);
     }
 
+    console.log('your moves were')
     path.forEach(move => console.log(move.callLocation()));
 }
 
