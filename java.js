@@ -37,6 +37,7 @@ function removeBoard() {
         board.removeChild(board.firstChild);
     }
 }
+    const knightStartStop = [];
 
     (function wireButtons() {
         const knightStart = document.querySelector('#knightStart');
@@ -51,6 +52,7 @@ function removeBoard() {
 
         const knightMoves = document.querySelector('#knightMoves');
         knightMoves.addEventListener('click', () => {
+            Knight([+knightStartStop[0][0] , +knightStartStop[0][2]], [+knightStartStop[1][0], +knightStartStop[1][2]])
         })
 
         const reset = document.querySelector('#reset');
