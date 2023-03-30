@@ -1,189 +1,193 @@
 (function initiate() {
-    renderBoard();
-  })();
+  renderBoard();
+})();
 
 function renderBoard() {
-    const gameboardSize = 8;
-    let counter = 1;
-    let xCounter = 0;
-    let yCounter = 7;
-    for(let i = gameboardSize; i > 0; i--){
+  const gameboardSize = 8;
+  let counter = 1;
+  let xCounter = 0;
+  let yCounter = 7;
+  for (let i = gameboardSize; i > 0; i--) {
+    for (let i = gameboardSize; i > 0; i--) {
+      const grid = document.createElement("div");
+      grid.classList.add("grid");
+      grid.style.flex = `1 0 ${100 / gameboardSize}%`;
 
-        for(let i = gameboardSize; i > 0 ; i--){
-    
-            const grid = document.createElement('div');
-            grid.classList.add("grid");
-            grid.style.flex= `1 0 ${100/gameboardSize}%`;
-    
-            if(counter % 2 != 0) {
-            grid.style.backgroundColor = `rgb(${255}, ${255}, ${255})`
-            }
-            else {
-            grid.style.backgroundColor = `rgb(${100}, ${100}, ${100})`
-            }
-            counter++;
-            grid.dataset.coordinates = [xCounter, yCounter]
-            board.appendChild(grid);
-            xCounter++;
-        }
-        xCounter=0;
-        yCounter--;
-        counter++;
-            }
+      if (counter % 2 != 0) {
+        grid.style.backgroundColor = `rgb(${255}, ${255}, ${255})`;
+      } else {
+        grid.style.backgroundColor = `rgb(${100}, ${100}, ${100})`;
+      }
+      counter++;
+      grid.dataset.coordinates = [xCounter, yCounter];
+      board.appendChild(grid);
+      xCounter++;
+    }
+    xCounter = 0;
+    yCounter--;
+    counter++;
+  }
 }
 
 function removeBoard() {
-    while(board.firstChild) {
-        board.removeChild(board.firstChild);
-    }
+  while (board.firstChild) {
+    board.removeChild(board.firstChild);
+  }
 }
-    const knightStartStop = [];
+const knightStartStop = [];
 
-    (function wireButtons() {
-        const knightStart = document.querySelector('#knightStart');
-        knightStart.addEventListener('click', () => {
-            knightSelectSpot();
-        })
+(function wireButtons() {
+  const knightStart = document.querySelector("#knightStart");
+  knightStart.addEventListener("click", () => {
+    knightSelectSpot();
+  });
 
-        const knightEnd = document.querySelector('#knightEnd');
-        knightEnd.addEventListener('click', () => {
-            knightEndSpot();
-        })
+  const knightEnd = document.querySelector("#knightEnd");
+  knightEnd.addEventListener("click", () => {
+    knightEndSpot();
+  });
 
-        const knightMoves = document.querySelector('#knightMoves');
-        knightMoves.addEventListener('click', () => {
-            const translatedKnightValues = typeConverter(knightStartStop)
-            Knight(translatedKnightValues[0], translatedKnightValues[1]);
-            knightPathMarker();
-        })
+  const knightMoves = document.querySelector("#knightMoves");
+  knightMoves.addEventListener("click", () => {
+    const translatedKnightValues = typeConverter(knightStartStop);
+    Knight(translatedKnightValues[0], translatedKnightValues[1]);
+    knightPathMarker();
+  });
 
-        const reset = document.querySelector('#reset');
-        reset.addEventListener('click', () => {
-            removeBoard();
-            renderBoard();
-            while(knightStartStop.length > 0) {
-                knightStartStop.pop();
-            }
-        })
-      })();
-
+  const reset = document.querySelector("#reset");
+  reset.addEventListener("click", () => {
+    removeBoard();
+    renderBoard();
+    while (knightStartStop.length > 0) {
+      knightStartStop.pop();
+    }
+  });
+})();
 
 function knightSelectSpot() {
-    const knightIcon = 'Start'
-    let knightStartPlaced = false
-    
-    board.addEventListener('mousedown', (function (e) {
-        if(knightStartPlaced != true) {
-        e.target.textContent = knightIcon ;
-        knightStartStop.push(e.target.dataset.coordinates)
-        knightStartPlaced = true;
-        console.log(knightStartStop)
-        }
-    }))
+  const knightIcon = "Start";
+  let knightStartPlaced = false;
+
+  board.addEventListener("mousedown", function (e) {
+    if (knightStartPlaced != true) {
+      e.target.textContent = knightIcon;
+      knightStartStop.push(e.target.dataset.coordinates);
+      knightStartPlaced = true;
+    }
+  });
 }
 
 function knightEndSpot() {
-    const knightIcon = 'Goal'
-    let knightEndPlaced = false
-    
-    board.addEventListener('mousedown', (function (e) {
-        if(knightEndPlaced != true) {
-        e.target.textContent = knightIcon ;
-        knightStartStop.push(e.target.dataset.coordinates)
-        knightEndPlaced = true;
-        console.log(knightStartStop)
-        }
-    }))
+  const knightIcon = "Goal";
+  let knightEndPlaced = false;
+
+  board.addEventListener("mousedown", function (e) {
+    if (knightEndPlaced != true) {
+      e.target.textContent = knightIcon;
+      knightStartStop.push(e.target.dataset.coordinates);
+      knightEndPlaced = true;
+    }
+  });
 }
 
 function knightPathMarker() {
-        for (let i = 0; i < path.length; i++) {
-            const currentNode = document.querySelector(`[data-coordinates= "${path[i].callLocation()}"]`)
-            console.log(currentNode)
-            currentNode.textContent= `Knight ${i}`      
-    }
+  for (let i = 0; i < path.length; i++) {
+    const currentNode = document.querySelector(
+      `[data-coordinates= "${path[i].callLocation()}"]`
+    );
+    currentNode.textContent = `Knight ${i}`;
+  }
 }
 /* changes an array of string values into one array containing
 two arrays that have the start and end goal coordinates*/
 function typeConverter(arr) {
-    return [[+arr[0][0], +arr[0][2]], [+arr[1][0], +arr[1][2]]]
+  return [
+    [+arr[0][0], +arr[0][2]],
+    [+arr[1][0], +arr[1][2]],
+  ];
 }
 /* ------------------------------------------------------------------- */
 const allMadeMoves = new Map();
 let path = [];
 
 const Chess = (x, y) => {
-    const coord = [x, y]
+  const coord = [x, y];
 
-    const knightActions = [
-        [1,2],[2,1],[2,-1],[1,-2],[-2,-1],[-1,-2],[-2,1],[-1,2]
-    ]
+  const knightActions = [
+    [1, 2],
+    [2, 1],
+    [2, -1],
+    [1, -2],
+    [-2, -1],
+    [-1, -2],
+    [-2, 1],
+    [-1, 2],
+  ];
 
-    let previousSpot;
+  let previousSpot;
 
-    const getPrevious = () => previousSpot;
-    const setPrevious = (inp) => {
-        previousSpot = previousSpot || inp;
-    }
-    /* set previous func is very important to do in this order
+  const getPrevious = () => previousSpot;
+  const setPrevious = (inp) => {
+    previousSpot = previousSpot || inp;
+  };
+  /* set previous func is very important to do in this order
     because you want the previous spot to be sent only once with a 
     valid value not continually reset, this way it will set its value
     then when something tries to change that value it wont because
     it already has a valid value */
 
-    const callLocation = () => `${coord[0]},${coord[1]}`;
+  const callLocation = () => `${coord[0]},${coord[1]}`;
 
-    const newMove = (xOffset, yOffset) => {
-        const [newX, newY] = [coord[0] + xOffset, coord[1] + yOffset];
-        if(0 <= newX && newX < 8 && 0 <= newY && newY < 8) {
-            return Chess(newX, newY)
-        }
+  const newMove = (xOffset, yOffset) => {
+    const [newX, newY] = [coord[0] + xOffset, coord[1] + yOffset];
+    if (0 <= newX && newX < 8 && 0 <= newY && newY < 8) {
+      return Chess(newX, newY);
     }
+  };
 
-    const knightMovements = () => {
-        return knightActions
-                .map((moves) => newMove(moves[0], moves[1]))
-                .filter((legalMove) => legalMove !== undefined);
-    }
+  const knightMovements = () => {
+    return knightActions
+      .map((moves) => newMove(moves[0], moves[1]))
+      .filter((legalMove) => legalMove !== undefined);
+  };
 
-    if(allMadeMoves.has(callLocation())) {
-        return allMadeMoves.get(callLocation());
-    } else {
-        newChess = {callLocation, getPrevious, setPrevious, knightMovements}
-        allMadeMoves.set(callLocation(), newChess);
-        return newChess; 
-    }
-}
+  if (allMadeMoves.has(callLocation())) {
+    return allMadeMoves.get(callLocation());
+  } else {
+    newChess = { callLocation, getPrevious, setPrevious, knightMovements };
+    allMadeMoves.set(callLocation(), newChess);
+    return newChess;
+  }
+};
 
 const Knight = (start, goal) => {
-    allMadeMoves.clear();
+  allMadeMoves.clear();
 
-    const beggining = Chess(...start);
-    const target = Chess(...goal);
+  const beggining = Chess(...start);
+  const target = Chess(...goal);
 
-    const queue = [beggining];
-    path = [target];
-    /* below adds nodes in a chain leading to original until
+  const queue = [beggining];
+  path = [target];
+  /* below adds nodes in a chain leading to original until
     a node link is created between my target and originator */
-    while(!queue.includes(target)) {
-        const currentPosition = queue.shift();
-        const newMoves = currentPosition.knightMovements();
+  while (!queue.includes(target)) {
+    const currentPosition = queue.shift();
+    const newMoves = currentPosition.knightMovements();
 
-        newMoves.forEach((position) => position.setPrevious(currentPosition));
-        /* set up direction chain begining at initial position */
-        queue.push(...newMoves)
-    }
-    /* and this below goes to target and backtracks to original starting point */
-    while(!path.includes(beggining)) {
-        const prevCoord = path[0].getPrevious();
-        path.unshift(prevCoord);
-    }
+    newMoves.forEach((position) => position.setPrevious(currentPosition));
+    /* set up direction chain begining at initial position */
+    queue.push(...newMoves);
+  }
+  /* and this below goes to target and backtracks to original starting point */
+  while (!path.includes(beggining)) {
+    const prevCoord = path[0].getPrevious();
+    path.unshift(prevCoord);
+  }
 
-    console.log('your moves were')
-    path.forEach(move => console.log(move.callLocation()));
-}
+  console.log("your moves were");
+  path.forEach((move) => console.log(move.callLocation()));
+};
 
-const one = Knight([4,5], [5,7])
-const two = Knight([0,7], [3,4]) 
-const three = Knight([0,7], [2,2])
-
+const one = Knight([4, 5], [5, 7]);
+const two = Knight([0, 7], [3, 4]);
+const three = Knight([0, 7], [2, 2]);
